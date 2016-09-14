@@ -1,0 +1,69 @@
+db.digits.mapReduce(
+			function(){emit({}, {sum:this.n});},
+			function(key, values){
+					var sum = 0;
+					values.forEach(function(value){
+						sum += value.sum;
+					});
+					return {sum:sum};
+				},
+			{out: 'sumN', verbose:true}
+)
+
+
+db.products.mapReduce(
+			function(){emit(this.mainCategory, {sum:this.totalReviews, q:1});},
+			function(key, values){
+					var sum = 0;
+					var q = 0;
+					values.forEach(function(value){
+						sum += value.sum;
+						q += value.q;
+					});
+					return {sum:sum, q:q};
+				},
+			{out: 'totals', verbose:true, finalize:function(){this.avgRev = this.sum/this.q;}}
+)
+	
+
+db.Point.mapReduce(
+			function(){emit({}, {time:0, lat:this.lat, lng:this.lng, sum:0});},
+			function(key, values){
+					var sum = 0;
+					function escape(key, time, lat, lng){
+						key.time = time;
+						key.lat = lat;
+						key.lng = lng;
+					}
+					values.forEach(function(v){
+						if(key.time == 'undefined'){
+							escape(key, v.timestamp, v.lat, v.lng);
+						} else {
+							var timeDiff = v.timestamp - key.time;
+							if(timeDiff > 15*60){
+								escape(key, v.timestamp, v.lat, v.lng);
+							} else {
+								sum += Math.sqrt((v.lat - key.lat)*(v.lat - key.lat) + (v.lng - key.lng)*(v.lng - key.lng));
+							}
+						}
+					});
+					return {sum:sum};
+				},
+			{out: 'sumN', verbose:true}
+)
+
+db.Point.mapReduce(
+			function(){emit({}, {time:0, lat:this.lat, lng:this.lng, sum:0});},
+			function(key, values){
+					var sum = 0;
+					values.forEach(function(v){
+						if(key.time == 'undefined'){
+							escape(key, v.timestamp, v.lat, v.lng);
+						} else {
+							sum += Math.sqrt((v.lat - key.lat)*(v.lat - key.lat) + (v.lng - key.lng)*(v.lng - key.lng));
+						}
+					});
+					return {sum:sum};
+				},
+			{out: 'sumN', verbose:true}
+)

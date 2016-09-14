@@ -1,0 +1,5 @@
+heroku apps
+heroku ps:scale web=1 --app mysimpletracker
+heroku logs -a mysimpletracker
+heroku logs --app mysimpletracker --tail
+heroku ps --app trackerweb
