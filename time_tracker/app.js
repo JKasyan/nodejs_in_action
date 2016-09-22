@@ -33,7 +33,7 @@ var server = http.createServer(function (req, res) {
                 case '/':
                     work.show(db, res);
                     break;
-                case 'archived':
+                case '/archived':
                     work.showArchived(db, res);
                     break;
             }
