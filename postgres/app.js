@@ -4,7 +4,7 @@
 var pg = require('pg');
 var fs = require('fs');
 
-fs.access('private', function(err){
+fs.stat('private', function(err) {
     if(err) throw 'File "private" not exists!';
     fs.readFile('private','utf8', function(err, data){
         if(err) throw err;
@@ -16,13 +16,13 @@ fs.access('private', function(err){
         var query = client.query('SELECT count(*) FROM author');
 
         query.on('row', function(row){
-            console.log(row);
-        })
+            console.log('count = ' + row.count);
+        });
 
         query.on('end', function() {
             console.log('end');
             client.end();
-        })
+        });
     })
 });
 
