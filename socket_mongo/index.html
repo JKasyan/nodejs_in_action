@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script>
+        var socket = io.connect('http://localhost:3003');
+        socket.emit('message', 'Connected!');
+        socket.on('message', function (message) {
+            console.log(message);
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>
