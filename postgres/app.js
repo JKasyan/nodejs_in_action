@@ -13,7 +13,7 @@ fs.stat('private', function(err) {
         var client = new pg.Client(url);
         client.connect();
 
-        var query = client.query('SELECT count(*) FROM author');
+        var query = client.query('SELECT count(*) FROM Author');
 
         query.on('row', function(row){
             console.log('count = ' + row.count);
