@@ -93,13 +93,68 @@ client.del('mylist', function(err){
  *
  */
 
-client.hmset('user:1000', 'username', 'Evgen', 'age', 30, function(err, res) {
+client.hmset('user:1001', {age:31, name:'Anton'}, function(err, res){
     if(err) throw err;
     console.log('Added hash = ' + res)
 });
 
-client.hgetall('user:1000', function(err, res) {
+client.hincrby('user:1001', 'age', 2, function(err, res) {
+    if(err) throw err;
+    console.log('Incremented 1 = ' + res)
+});
+
+client.hgetall('user:1001', function(err, res) {
     if(err) throw err;
     for(var key in res) console.log(key + ' = ' + res[key]);
 });
+
+/**
+ * ##############
+ * Sets
+ * ##############
+ */
+
+client.sadd('myset', arrayGen(-100, 100), function(err, res) {
+    if(err) throw err;
+    console.log(res);
+});
+
+function arrayGen(a,b/*array*/) {
+    var arr = arguments[2] || [];
+    while(a < b) {
+        arr.push(a++);
+    }
+    return arr;
+}
+
+/**
+ * ############
+ * Sorted set
+ * ############
+ */
+client.zadd('my_sorted_set', 1998, 'Sasha', function(err, res) {
+    if(err) throw err;
+    console.log('Added = ' + res);
+});
+
+client.zadd('my_sorted_set', 1986, 'Evgen', function(err, res) {
+    if(err) throw err;
+    console.log('Added = ' + res);
+});
+
+client.zadd('my_sorted_set', 1989, 'Vika', function(err, res) {
+    if(err) throw err;
+    console.log('Added = ' + res);
+});
+
+client.zrange('my_sorted_set', 0, -1, function(err, res) {
+    if(err) throw err;
+    console.log('Members of sorted set = ' + res);
+});
+
+client.zrangebyscore('my_sorted_set', 1980, 1990, function(err, res) {
+    if(err) throw err;
+    console.log(res);
+});
+
 client.quit();
