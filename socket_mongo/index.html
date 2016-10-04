@@ -5,11 +5,32 @@
     <title>Title</title>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script>
+        var userSocketIds = new Set();
         var socket = io.connect('http://localhost:3003');
-        socket.emit('message', 'Connected!');
+        //
+        socket.emit('newUser', socket.id);
+        //
         socket.on('message', function (message) {
             console.log(message);
         });
+        //
+        //{socketId: socket.id}
+        socket.on('newUser', function (data) {
+            console.log('New user: ' + data.socketId);
+            if(socket.id != data.socketId) {
+                userSocketIds.add(data.socketId);
+            }
+        });
+        //
+        socket.on('fromUser', function (data) {
+            console.log('From user = ' + data);
+        });
+
+        function sendToUser(msg) {
+            var id = userSocketIds.values().next().value;
+            console.log(id);
+            socket.emit('sendToUser', {message: msg, id:id});
+        }
     </script>
 </head>
 <body>
