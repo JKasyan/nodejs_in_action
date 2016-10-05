@@ -5,32 +5,43 @@
     <title>Title</title>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script>
-        var userSocketIds = new Set();
+        //socketId -> name
+        var userSocketIds = {};
         var socket = io.connect('http://localhost:3003');
+        var myName;
         //
-        socket.emit('newUser', socket.id);
-        //
-        socket.on('message', function (message) {
-            console.log(message);
+        socket.on('newName', function (data) {
+            console.log('newName = ', data.name);
+            myName = data.name;
         });
         //
         //{socketId: socket.id}
         socket.on('newUser', function (data) {
             console.log('New user: ' + data.socketId);
             if(socket.id != data.socketId) {
-                userSocketIds.add(data.socketId);
+                console.log('try add = ', data);
+                userSocketIds[data.socketId] = data.name;
             }
         });
         //
         socket.on('fromUser', function (data) {
-            console.log('From user = ' + data);
+            console.log('From user = ', data);
         });
 
-        function sendToUser(msg) {
-            var id = userSocketIds.values().next().value;
-            console.log(id);
+        function sendToUser(id, msg) {
+            console.log('sendToUser with id = ', id);
             socket.emit('sendToUser', {message: msg, id:id});
         }
+
+        socket.on('users', function (users) {
+            console.log('Users = ', users);
+            userSocketIds = users;
+        });
+
+        socket.on('disconnectUser', function (data) {
+            delete userSocketIds[data.socketId];
+            console.log('Disconnect = ' + data.socketId);
+        });
     </script>
 </head>
 <body>
