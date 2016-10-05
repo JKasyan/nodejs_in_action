@@ -28,12 +28,15 @@ fs.readFile('private', 'utf8', function (err, data) {
             id: String
         }, {collection: 'Point'});
         var point = mongoose.model('point', PointSchema);
-        point.where('timestamp')
-            .gt(new Date(2016, 7, 1).getTime() / 1000)
+        point.where('id')
+            .eq(100)
             .select('lat')
-            .select('lng')
-            .limit(100)
+            .select('lon')
             .exec(function (err, result) {
+                if (err) throw err;
+                console.log(result[0].lon);
+
+                /*
                 if (err) throw err;
                 console.log('Size = ' + result.length);
                 var lat, lng;
@@ -51,6 +54,7 @@ fs.readFile('private', 'utf8', function (err, data) {
                 }, 0);
                 console.log(res);
                 mongoose.disconnect();
+                */
             });
     });
 });

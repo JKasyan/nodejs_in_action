@@ -10,6 +10,19 @@
         var socket = io.connect('http://localhost:3003');
         var myName;
         //
+        socket.on('connect', function() {
+            console.log('connect');
+            socket.emit('authentication', {username: "John", password: "qwerty"});
+            socket.on('authenticated', function() {
+                console.log('authenticated!');
+                // use the socket as usual
+            });
+        });
+        //
+        socket.on('unauthorized', function(err){
+            console.log("There was an error with the authentication:", err.message);
+        });
+        //
         socket.on('newName', function (data) {
             console.log('newName = ', data.name);
             myName = data.name;
